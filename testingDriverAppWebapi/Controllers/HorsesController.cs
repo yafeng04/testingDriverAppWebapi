@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using testingDriverAppWebapi.DTO;
 using testingDriverAppWebapi.Models;
 
 namespace testingDriverAppWebapi.Controllers
@@ -17,13 +18,41 @@ namespace testingDriverAppWebapi.Controllers
         private testingDriverAppWebapiContext db = new testingDriverAppWebapiContext();
 
         // GET: api/Horses
-        public IQueryable<Horse> GetHorses()
+        public IQueryable<HorseDTO> GetHorses()
         {
-            return db.Horses;
+            var horseDTOs = new List<HorseDTO>();
+
+
+            foreach (var horse in db.Horses)
+            {
+                var jobHorseIds = new List<Guid>();
+                foreach (var jobHorse in horse.JobHorses)
+                {
+                    jobHorseIds.Add(jobHorse.JobHorseId);
+                }
+                var horseDTO = new HorseDTO()
+                {
+                    HorseId = horse.HorseId,
+                    
+                    Name = horse.Name,
+
+                    Brand = horse.Brand,
+
+                    Microchip = horse.Microchip,
+
+                    Colour = horse.Colour,
+
+                    Sex = horse.Sex,
+
+                    JobHorseIds = jobHorseIds
+                };
+                horseDTOs.Add(horseDTO);
+            }
+            return horseDTOs.AsQueryable();
         }
 
         // GET: api/Horses/5
-        [ResponseType(typeof(Horse))]
+        [ResponseType(typeof(HorseDTO))]
         public IHttpActionResult GetHorse(Guid id)
         {
             Horse horse = db.Horses.Find(id);
@@ -32,12 +61,35 @@ namespace testingDriverAppWebapi.Controllers
                 return NotFound();
             }
 
-            return Ok(horse);
+            var jobHorseIds = new List<Guid>();
+            foreach (var jobHorse in horse.JobHorses)
+            {
+                jobHorseIds.Add(jobHorse.JobHorseId);
+            }
+            var horseDTO = new HorseDTO()
+            {
+                HorseId = horse.HorseId,
+
+                Name = horse.Name,
+
+                Brand = horse.Brand,
+
+                Microchip = horse.Microchip,
+
+                Colour = horse.Colour,
+
+                Sex = horse.Sex,
+                JobHorseIds = jobHorseIds
+            };
+
+
+            return Ok(horseDTO);
         }
 
         // PUT: api/Horses/5
         [ResponseType(typeof(void))]
         public IHttpActionResult PutHorse(Guid id, Horse horse)
+            //TODO implement the put method that serves DTO
         {
             if (!ModelState.IsValid)
             {
@@ -73,6 +125,7 @@ namespace testingDriverAppWebapi.Controllers
         // POST: api/Horses
         [ResponseType(typeof(Horse))]
         public IHttpActionResult PostHorse(Horse horse)
+            //TODO implement the post method that serves DTO
         {
             if (!ModelState.IsValid)
             {

@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace testingDriverAppWebapi.Models
+namespace testingDriverAppWebapi.DTO
 {
-    public class JobEntity
+    public class JobEntityDTO
     {
         [Key]
         public Guid JobEntityId { get; set; }
@@ -23,7 +23,5 @@ namespace testingDriverAppWebapi.Models
 
         public int NotifyTime { get; set; }
 
-        public virtual Job Job { get; set; }
-        public virtual Entity Entity { get; set; }
     }
 }

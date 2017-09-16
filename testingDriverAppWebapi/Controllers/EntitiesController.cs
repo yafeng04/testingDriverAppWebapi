@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using testingDriverAppWebapi.DTO;
 using testingDriverAppWebapi.Models;
 
 namespace testingDriverAppWebapi.Controllers
@@ -17,13 +18,34 @@ namespace testingDriverAppWebapi.Controllers
         private testingDriverAppWebapiContext db = new testingDriverAppWebapiContext();
 
         // GET: api/Entities
-        public IQueryable<Entity> GetEntities()
+        public IQueryable<EntityDTO> GetEntities()
         {
-            return db.Entities;
+            var entityDTOs = new List<EntityDTO>();
+
+
+            foreach (var entity in db.Entities)
+            {
+                var jobEntityIds = new List<Guid>();
+                foreach (var jobEntity in entity.JobEntities)
+                {
+                    jobEntityIds.Add(jobEntity.JobEntityId);
+                }
+                var entityDTO = new EntityDTO()
+                {
+                    EntityId = entity.EntityId,
+                    Email = entity.Email,
+                    Name = entity.Name,
+                    Mobile = entity.Mobile,
+                    JobEntityIds = jobEntityIds
+                };
+                entityDTOs.Add(entityDTO);
+            }
+            return entityDTOs.AsQueryable();
+
         }
 
         // GET: api/Entities/5
-        [ResponseType(typeof(Entity))]
+        [ResponseType(typeof(EntityDTO))]
         public IHttpActionResult GetEntity(Guid id)
         {
             Entity entity = db.Entities.Find(id);
@@ -32,17 +54,37 @@ namespace testingDriverAppWebapi.Controllers
                 return NotFound();
             }
 
-            return Ok(entity);
+            var jobEntityIds = new List<Guid>();
+            foreach (var jobEntity in entity.JobEntities)
+            {
+                jobEntityIds.Add(jobEntity.JobEntityId);
+            }
+            var entityDTO = new EntityDTO()
+            {
+                EntityId = entity.EntityId,
+                Email = entity.Email,
+                Name = entity.Name,
+                Mobile = entity.Mobile,
+                JobEntityIds = jobEntityIds
+            };
+
+
+            return Ok(entityDTO);
         }
 
         // PUT: api/Entities/5
         [ResponseType(typeof(void))]
         public IHttpActionResult PutEntity(Guid id, Entity entity)
+            
+            //TODO implement the put method that serves DTO
+            
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            //Entity localEntity = db.Entities.Find(id);
 
             if (id != entity.EntityId)
             {
@@ -73,6 +115,9 @@ namespace testingDriverAppWebapi.Controllers
         // POST: api/Entities
         [ResponseType(typeof(Entity))]
         public IHttpActionResult PostEntity(Entity entity)
+
+            //TODO implement the post method that serves DTO
+
         {
             if (!ModelState.IsValid)
             {

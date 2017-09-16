@@ -184,21 +184,41 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\EntitiesController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HorsesController.cs" />
     <Compile Include="Controllers\JobEntitiesController.cs" />
     <Compile Include="Controllers\JobHorsesController.cs" />
     <Compile Include="Controllers\JobsController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="DTOControllers\EntityDTOesController.cs" />
+    <Compile Include="DTOControllers\HomeController.cs" />
+    <Compile Include="DTOControllers\HorseDTOesController.cs" />
+    <Compile Include="DTOControllers\JobDTOesController.cs" />
+    <Compile Include="DTOControllers\JobEntityDTOesController.cs" />
+    <Compile Include="DTOControllers\JobHorseDTOesController.cs" />
+    <Compile Include="DTOControllers\ValuesController.cs" />
+    <Compile Include="DTO\EntityDTO.cs" />
+    <Compile Include="DTO\HorseDTO.cs" />
+    <Compile Include="DTO\JobDTO.cs" />
+    <Compile Include="DTO\JobEntityDTO.cs" />
+    <Compile Include="DTO\JobHorseDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201709161211250_InitialCreate.cs" />
+    <Compile Include="Migrations\201709161211250_InitialCreate.Designer.cs">
+      <DependentUpon>201709161211250_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201709161231147_remove.cs" />
+    <Compile Include="Migrations\201709161231147_remove.Designer.cs">
+      <DependentUpon>201709161231147_remove.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Entity.cs" />
     <Compile Include="Models\Horse.cs" />
     <Compile Include="Models\Job.cs" />
     <Compile Include="Models\JobEntity.cs" />
     <Compile Include="Models\JobHorse.cs" />
     <Compile Include="Models\testingDriverAppWebapiContext.cs" />
+    <Compile Include="Models\testingDriverAppWebapiDTOContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -257,7 +277,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="DTO\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -271,6 +290,14 @@
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201709161211250_InitialCreate.resx">
+      <DependentUpon>201709161211250_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201709161231147_remove.resx">
+      <DependentUpon>201709161231147_remove.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

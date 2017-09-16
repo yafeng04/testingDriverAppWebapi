@@ -28,5 +28,7 @@ namespace testingDriverAppWebapi.Models
         public System.Data.Entity.DbSet<testingDriverAppWebapi.Models.JobEntity> JobEntities { get; set; }
 
         public System.Data.Entity.DbSet<testingDriverAppWebapi.Models.JobHorse> JobHorses { get; set; }
+
+
     }
 }
