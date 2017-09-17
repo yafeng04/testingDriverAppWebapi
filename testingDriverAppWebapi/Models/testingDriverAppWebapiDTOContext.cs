@@ -17,6 +17,9 @@ namespace testingDriverAppWebapi.Models
     
         public testingDriverAppWebapiDTOContext() : base("name=testingDriverAppWebapiDTOContext")
         {
+            this.Configuration.LazyLoadingEnabled = false;
+            this.Configuration.ProxyCreationEnabled = false;
+
         }
 
         public System.Data.Entity.DbSet<testingDriverAppWebapi.DTO.EntityDTO> EntityDTOes { get; set; }

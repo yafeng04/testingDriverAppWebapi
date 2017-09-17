@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using testingDriverAppWebapi.DTO;
 using testingDriverAppWebapi.Models;
 
 namespace testingDriverAppWebapi.Controllers
@@ -17,13 +16,31 @@ namespace testingDriverAppWebapi.Controllers
         private testingDriverAppWebapiContext db = new testingDriverAppWebapiContext();
 
         // GET: api/JobEntities
-        public IQueryable<JobEntity> GetJobEntities()
+        public IQueryable<JobEntityDTO> GetJobEntities()
         {
-            return db.JobEntities;
+
+            var jobEntityDTOs = new List<JobEntityDTO>();
+
+            foreach (var jobEntity in db.JobEntities)
+            {
+
+                var jobEntityDTO = new JobEntityDTO()
+                {
+                    JobEntityId = jobEntity.JobEntityId,
+                    EntityId = jobEntity.EntityId,
+                    JobId = jobEntity.JobId,
+                    MethodToNotify = jobEntity.MethodToNotify,
+                    NotifyTime = jobEntity.NotifyTime
+
+                };
+                jobEntityDTOs.Add(jobEntityDTO);
+            }
+            return jobEntityDTOs.AsQueryable();
+
         }
 
         // GET: api/JobEntities/5
-        [ResponseType(typeof(JobEntity))]
+        [ResponseType(typeof(JobEntityDTO))]
         public IHttpActionResult GetJobEntity(Guid id)
         {
             JobEntity jobEntity = db.JobEntities.Find(id);
@@ -31,23 +48,59 @@ namespace testingDriverAppWebapi.Controllers
             {
                 return NotFound();
             }
+            var jobEntityDTO = new JobEntityDTO()
+            {
+                JobEntityId = jobEntity.JobEntityId,
+                EntityId = jobEntity.EntityId,
+                JobId = jobEntity.JobId,
+                MethodToNotify = jobEntity.MethodToNotify,
+                NotifyTime = jobEntity.NotifyTime
 
-            return Ok(jobEntity);
+            };
+
+            return Ok(jobEntityDTO);
         }
 
         // PUT: api/JobEntities/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutJobEntity(Guid id, JobEntity jobEntity)
+        public IHttpActionResult PutJobEntity(Guid id, JobEntityDTO jobEntityDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != jobEntity.JobEntityId)
+            if (id != jobEntityDTO.JobEntityId)
             {
                 return BadRequest();
             }
+
+            JobEntity jobEntity = db.JobEntities.Find(id);
+            if (jobEntity == null)
+            {
+                return NotFound();
+            }
+
+            jobEntity.EntityId = jobEntityDTO.EntityId;
+            jobEntity.JobId = jobEntityDTO.JobId;
+            jobEntity.MethodToNotify = jobEntityDTO.MethodToNotify;
+            jobEntity.NotifyTime = jobEntityDTO.NotifyTime;
+
+            var jobInDb = db.Jobs.Find(jobEntity.JobId);
+            if (jobInDb == null)
+            {
+                return NotFound();
+            }
+
+            jobEntity.Job = jobInDb;
+
+            var entityInDb = db.Entities.Find(jobEntity.EntityId);
+            if (entityInDb == null)
+            {
+                return NotFound();
+            }
+
+            jobEntity.Entity = entityInDb;
 
             db.Entry(jobEntity).State = EntityState.Modified;
 
@@ -71,15 +124,43 @@ namespace testingDriverAppWebapi.Controllers
         }
 
         // POST: api/JobEntities
-        [ResponseType(typeof(JobEntity))]
-        public IHttpActionResult PostJobEntity(JobEntity jobEntity)
+        [ResponseType(typeof(JobEntityDTO))]
+        public IHttpActionResult PostJobEntity(JobEntityDTO jobEntityDTO)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.JobEntities.Add(jobEntity);
+            var jobEntity = new JobEntity
+            {
+                EntityId = jobEntityDTO.EntityId,
+                JobId = jobEntityDTO.JobId,
+                MethodToNotify = jobEntityDTO.MethodToNotify,
+                NotifyTime = jobEntityDTO.NotifyTime
+            };
+
+
+
+
+            var jobInDb = db.Jobs.Find(jobEntity.JobId);
+            if (jobInDb == null)
+            {
+                return NotFound();
+            }
+
+            jobEntity.Job = jobInDb;
+
+            var entityInDb = db.Entities.Find(jobEntity.EntityId);
+            if (entityInDb == null)
+            {
+                return NotFound();
+            }
+
+            jobEntity.Entity = entityInDb;
+
+
+            //db.JobEntities.Add();
 
             try
             {
@@ -87,7 +168,7 @@ namespace testingDriverAppWebapi.Controllers
             }
             catch (DbUpdateException)
             {
-                if (JobEntityExists(jobEntity.JobEntityId))
+                if (JobEntityExists(jobEntityDTO.JobEntityId))
                 {
                     return Conflict();
                 }
@@ -97,7 +178,7 @@ namespace testingDriverAppWebapi.Controllers
                 }
             }
 
-            return CreatedAtRoute("DefaultApi", new { id = jobEntity.JobEntityId }, jobEntity);
+            return CreatedAtRoute("DefaultApi", new { id = jobEntityDTO.JobEntityId }, jobEntityDTO);
         }
 
         // DELETE: api/JobEntities/5

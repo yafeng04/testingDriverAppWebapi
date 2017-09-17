@@ -17,16 +17,87 @@ namespace testingDriverAppWebapi.Controllers
     {
         private testingDriverAppWebapiDTOContext db = new testingDriverAppWebapiDTOContext();
 
+        private bool initialised = false;
+
+        private void Initializer()
+        {
+            if (initialised == false)
+            {
+                Guid jobId = Guid.Parse("11111111-1111-1111-1111-111111111131");
+                JobDTO jobDTO = db.JobDTOes.Find(jobId);
+                jobDTO.JobEntityIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111151"));
+                jobDTO.JobEntityIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111152"));
+                jobDTO.JobHorseIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111161"));
+                jobDTO.JobHorseIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111162"));
+                jobDTO.JobHorseIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111163"));
+
+                jobId = Guid.Parse("11111111-1111-1111-1111-111111111132");
+                 jobDTO = db.JobDTOes.Find(jobId);
+                jobDTO.JobEntityIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111153"));
+                jobDTO.JobHorseIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111164"));
+                jobDTO.JobHorseIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111165"));
+
+                jobId = Guid.Parse("11111111-1111-1111-1111-111111111133");
+                jobDTO = db.JobDTOes.Find(jobId);
+                jobDTO.JobEntityIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111154"));
+                jobDTO.JobHorseIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111166"));
+                jobDTO.JobHorseIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111167"));
+
+                jobId = Guid.Parse("11111111-1111-1111-1111-111111111134");
+                 jobDTO = db.JobDTOes.Find(jobId);
+                jobDTO.JobEntityIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111155"));
+                jobDTO.JobEntityIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111156"));
+                jobDTO.JobHorseIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111168"));
+                jobDTO.JobHorseIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111169"));
+
+
+
+
+                initialised = true;
+            }
+
+        }
+
         // GET: api/JobDTOes
         public IQueryable<JobDTO> GetJobDTOes()
         {
+            Initializer();
             return db.JobDTOes;
+        }
+
+        [HttpGet]
+        [Route("jobs/getList")]
+        public IHttpActionResult GetHorsesByHorseIds(string opt = null, string ids = null)
+        {
+
+            Initializer();
+            // Extract options.
+            var listOnly = opt?.Contains("list") ?? false;
+
+            // Extract requested IDs.
+
+            try
+            {
+                var results = db.JobDTOes;
+
+                var response = new Dictionary<string, object>()
+                {
+                    { "Results", results }
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
 
         // GET: api/JobDTOes/5
         [ResponseType(typeof(JobDTO))]
         public IHttpActionResult GetJobDTO(Guid id)
         {
+            Initializer();
             JobDTO jobDTO = db.JobDTOes.Find(id);
             if (jobDTO == null)
             {

@@ -23,6 +23,34 @@ namespace testingDriverAppWebapi.Controllers
             return db.JobEntityDTOes;
         }
 
+        [HttpGet]
+        [Route("jobEntities/getList")]
+        public IHttpActionResult GetHorsesByHorseIds(string opt = null, string ids = null)
+        {
+
+
+            // Extract options.
+            var listOnly = opt?.Contains("list") ?? false;
+
+            // Extract requested IDs.
+
+            try
+            {
+                var results = db.JobEntityDTOes;
+
+                var response = new Dictionary<string, object>()
+                {
+                    { "Results", results }
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
         // GET: api/JobEntityDTOes/5
         [ResponseType(typeof(JobEntityDTO))]
         public IHttpActionResult GetJobEntityDTO(Guid id)
@@ -35,6 +63,8 @@ namespace testingDriverAppWebapi.Controllers
 
             return Ok(jobEntityDTO);
         }
+
+      
 
         // PUT: api/JobEntityDTOes/5
         [ResponseType(typeof(void))]

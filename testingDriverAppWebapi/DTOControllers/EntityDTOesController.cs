@@ -15,18 +15,78 @@ namespace testingDriverAppWebapi.Controllers
 {
     public class EntityDTOesController : ApiController
     {
+        
         private testingDriverAppWebapiDTOContext db = new testingDriverAppWebapiDTOContext();
+        private bool initialised = false;
+
+        private void Initializer()
+        {
+            if (initialised == false)
+            {
+                Guid entityId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+                EntityDTO entityDTO = db.EntityDTOes.Find(entityId);
+                entityDTO.JobEntityIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111151"));
+
+                entityId = Guid.Parse("11111111-1111-1111-1111-111111111112");
+                entityDTO = db.EntityDTOes.Find(entityId);
+                entityDTO.JobEntityIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111152"));
+                entityDTO.JobEntityIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111156"));
+
+                entityId = Guid.Parse("11111111-1111-1111-1111-111111111113");
+                entityDTO = db.EntityDTOes.Find(entityId);
+                entityDTO.JobEntityIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111153"));
+
+                entityId = Guid.Parse("11111111-1111-1111-1111-111111111114");
+                entityDTO = db.EntityDTOes.Find(entityId);
+                entityDTO.JobEntityIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111154"));
+                entityDTO.JobEntityIds.Add(Guid.Parse("11111111-1111-1111-1111-111111111155"));
+                initialised = true;
+            }
+
+        }
+
 
         // GET: api/EntityDTOes
         public IQueryable<EntityDTO> GetEntityDTOes()
         {
+            Initializer();
             return db.EntityDTOes;
+        }
+
+        [HttpGet]
+        [Route("entities/getList")]
+        public IHttpActionResult GetHorsesByHorseIds(string opt = null, string ids = null)
+        {
+
+            Initializer();
+            // Extract options.
+            var listOnly = opt?.Contains("list") ?? false;
+
+            // Extract requested IDs.
+
+            try
+            {
+                var results = db.EntityDTOes;
+
+                var response = new Dictionary<string, object>()
+                {
+                    { "Results", results }
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
 
         // GET: api/EntityDTOes/5
         [ResponseType(typeof(EntityDTO))]
         public IHttpActionResult GetEntityDTO(Guid id)
         {
+
+            Initializer();
             EntityDTO entityDTO = db.EntityDTOes.Find(id);
             if (entityDTO == null)
             {

@@ -23,6 +23,34 @@ namespace testingDriverAppWebapi.Controllers
             return db.JobHorseDTOes;
         }
 
+        [HttpGet]
+        [Route("jobHorses/getList")]
+        public IHttpActionResult GetHorsesByHorseIds(string opt = null, string ids = null)
+        {
+
+
+            // Extract options.
+            var listOnly = opt?.Contains("list") ?? false;
+
+            // Extract requested IDs.
+
+            try
+            {
+                var results = db.JobHorseDTOes;
+
+                var response = new Dictionary<string, object>()
+                {
+                    { "Results", results }
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
         // GET: api/JobHorseDTOes/5
         [ResponseType(typeof(JobHorseDTO))]
         public IHttpActionResult GetJobHorseDTO(Guid id)
